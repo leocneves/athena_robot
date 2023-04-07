@@ -1,0 +1,8 @@
+<launch>
+  <include file="$(find freenect_launch)/launch/freenect.launch" >
+  </include>
+
+  <node pkg="athena_vision" type="start_vision.sh" 
+    name="vision_roslaunch" output="screen">
+  </node>
+</launch>

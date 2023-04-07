@@ -1,0 +1,31 @@
+<launch> 
+
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan" >
+      <remap from="cloud_in" to="/camera/depth_registered/points"/>
+      <remap from="scan" to="/scan" />
+      <rosparam>
+        target_frame: camera_link
+        transform_tolerance: 0.01
+        min_height: 0.0
+        max_height: 1.0
+        
+        angle_min: -2.6 #-1.5708
+        angle_max: 2.6 #1.5708
+        angle_increment: 0.0087
+        scan_time: 0.3333
+        range_min: 0.45
+        range_max: 4.0 # 4
+        use_inf: true
+        
+        #concurrency_level affects number of pc queued for processing and the number of threadsused
+        # 0: Detect number of cores
+        # 1: Single threaded
+        # 2: inf : Parallelism level
+        concurrency_level: 0
+      </rosparam>
+    </node>
+
+   
+   <node pkg="tf" type="static_transform_publisher" name="laser_broadcast" args="0.18 0 0.42 0 0 0 1 base_link camera_link 30" />
+
+</launch>
