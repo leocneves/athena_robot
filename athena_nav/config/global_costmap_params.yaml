@@ -1,5 +1,26 @@
 global_costmap:
-  global_frame: /map
+  global_frame: map #odom
   robot_base_frame: base_link
-  update_frequency: 5.0
+#  rolling_window: false           # Whether or not to use a rolling window version of the costmap.
   static_map: true
+
+  path_distance_bias: 0.9
+
+  update_frequency: 5.0 #5.0
+  publish_frequency: 5.0
+  always_send_full_costmap: true
+
+  #width: 200
+  #height: 200
+  resolution: 0.05
+  #origin_x: 0.0                   # The x origin of the map in the global frame in meters.
+  #origin_y: 0.0                   # The y origin of the map in the global frame in meters.
+
+  transform_tolerance: 0.5
+
+
+#  plugins:
+
+#     - {name: static_layer, type: "costmap_2d::StaticLayer"}
+#     - {name: obstacle_layer, type: "costmap_2d::VoxelLayer"}
+#     - {name: inflation_layer, type: "costmap_2d::InflationLayer"}

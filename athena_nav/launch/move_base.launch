@@ -1,6 +1,10 @@
 
 <launch>
 
+
+  <arg name="xy_goal_tolerance"   default="0.1"/>
+  <arg name="yaw_goal_tolerance"  default="0.05"/>
+
    <master auto="start"/>
  <!-- Run the map server --> 
     <node name="map_server" pkg="map_server" type="map_server" args="$(find athena_nav)/maps/mapa.yaml"/>
@@ -11,12 +15,19 @@
    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
 
     <remap from="cmd_vel" to="/hoverboard_velocity_controller/cmd_vel" />
+    <remap from="odom" to="/hoverboard_velocity_controller/odom"/>
+
+   <rosparam command="load" file="$(find athena_nav)/config/move_base_params.yaml"/>
 
     <rosparam file="$(find athena_nav)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
     <rosparam file="$(find athena_nav)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find athena_nav)/config/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find athena_nav)/config/global_costmap_params.yaml" command="load" /> 
     <rosparam file="$(find athena_nav)/config/base_local_planner_params.yaml" command="load" />
+
+    <param name="TrajectoryPlannerROS/xy_goal_tolerance"  value="$(arg xy_goal_tolerance)"/>
+    <param name="TrajectoryPlannerROS/yaw_goal_tolerance" value="$(arg yaw_goal_tolerance)"/>
+
  </node>
 
 </launch> 

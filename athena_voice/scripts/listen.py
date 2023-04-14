@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 import random
 import time
-import pyttsx3
+#import pyttsx3
+from gtts import gTTS
+import os
 import speech_recognition as sr
 import pandas as pd
-from dynaconf import settings
 import Levenshtein
 
 def recognize_speech_from_mic(recognizer, microphone):
@@ -66,14 +68,20 @@ def recognize_speech_from_mic(recognizer, microphone):
     return response
 
 def say(phrase):
-    engine.say(phrase)
-    engine.runAndWait()
+    tts = gTTS(text=phrase, lang='pt-br')
 
-    isBusy = engine.isBusy()
-    print(isBusy)
-    # while engine.isBusy():
-    #     time.sleep(.1)
+# Salve o arquivo de áudio como "audio.mp3"
+    tts.save("/home/ubuntu/catkin_ws/src/athena_robot/athena_voice/scripts/audio.mp3")
+
+# Reproduza o arquivo de áudio usando o player padrão do sistema
+    os.system("mpg321 /home/ubuntu/catkin_ws/src/athena_robot/athena_voice/scripts/audio.mp3")
     return None
+
+def beep():
+    duration = 0.1  # segundos
+    freq = 540  # Hz
+    volume = 0.3  # reduzido em 50%
+    os.system(f"play -q -n synth {duration} sine {freq} vol {volume}")
 
 def recognizedWord(word):
     resp = recognize_speech_from_mic(recognizer, microphone)
@@ -90,15 +98,10 @@ if __name__ == "__main__":
     recognizer = sr.Recognizer()
     # sr.Microphone.list_microphone_names()
     microphone = sr.Microphone(device_index=1)
-    engine = pyttsx3.init()
-    voice = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_PT-BR_MARIA_11.0"
-
-    engine.setProperty('voice', voice)
-    engine.setProperty('rate', 150)
-    engine.setProperty('volume',1.0)
 
 
     # Captura frases das configs
+    mWord = False
 
     while True:
         # while not recognizedWord(settings.START_WORD):
@@ -112,14 +115,18 @@ if __name__ == "__main__":
         except:
             continue
 
-        # for k,v in settings.COMANDOS.items():
-        #     v.FRASE
-        
-
-        if respPhrase == "fechar simulação":
-            say("Simulação finalizada!")
-            break
-        elif respPhrase.lower() == 'carregar simulação lobo ovelha':
+        if respPhrase == "atena":
+            say("Olá!")
+            mWord = True
+            #break
+        elif (respPhrase.lower() == 'que dia é hoje') and mWord:
             # say(respPhrase)
             # print(resp)
-            say("Simulação aberta!")
+            say("Hoje é dia 7 de abril, aniversário do menino egito. Parabéns egito!")
+            mWord = False
+        elif (respPhrase.lower() == 'quem é você') and mWord:
+            # say(respPhrase)
+            # print(resp)
+            say("Sou a robô para atividades domésticas do Leonardo. Muito prazer.")
+            mWord = False
+
