@@ -4,9 +4,9 @@
 
   <!-- <param name="robot_description" command="$(find xacro)/xacro.py '$(find diff_drive_bot)/urdf/mybot.xacro'"/> -->
 
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+ <!--  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="use_gui" value="False"/>
-  </node>  
+  </node> --> 
 
   <!-- <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"></node> -->
 
@@ -15,19 +15,20 @@
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
   <!-- Place map frame at odometry frame -->
-  <node pkg="tf" type="static_transform_publisher" name="map_odom_broadcaster"
-      args="0 0 0 0 0 0 map odom 100"/>
+  <!-- <node pkg="tf" type="static_transform_publisher" name="map_odom_broadcaster"
+      args="0 0 0 0 0 0 /map odom 100"/> -->
 
   <!-- AMCL -->
   <node pkg="amcl" type="amcl" name="amcl" output="screen">
-    <remap from="scan" to="scan"/>
+    <remap from="scan" to="/scan"/>
+    <param name="global_frame_id" value="map"/>
     <param name="odom_frame_id" value="odom"/>
     <param name="odom_model_type" value="diff-corrected"/>
     <param name="base_frame_id" value="base_link"/>
     <param name="update_min_d" value="0.5"/>
     <param name="update_min_a" value="1.0"/>
 
-    <param name="min_particles"             value="200"/>
+    <param name="min_particles"             value="400"/>
     <param name="max_particles"             value="1500"/>
     <param name="kld_err"                   value="0.02"/>
     <param name="resample_interval"         value="1"/>
@@ -57,7 +58,7 @@
   <!-- Arguments -->
   <arg name="cmd_vel_topic" default="hoverboard_velocity_controller/cmd_vel" />
   <arg name="odom_topic" default="hoverboard_velocity_controller/odom" />
-  <arg name="move_forward_only" default="false"/>
+  <arg name="move_forward_only" default="true"/>
 
   <!-- move_base -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">

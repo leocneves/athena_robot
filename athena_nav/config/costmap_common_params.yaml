@@ -1,26 +1,26 @@
-obstacle_range: 2.5
-raytrace_range: 3.0 #3.0
+obstacle_range: 5.0
+raytrace_range: 6.0 #3.0
 
 footprint: [[-0.18, -0.18], [-0.18, 0.18], [0.18, 0.18], [0.18, -0.18]]
-#footprint_padding: 0.008#0.05
+footprint_padding: 0 #0.05
 
-#map_topic: map
-#subscribe_to_updates: true
-#global_frame: odom
+map_topic: map
+subscribe_to_updates: true
+global_frame: map #odom
 
 #robot_base_frame: base_link
 #update_frequency: 30.0
 #publish_frequency: 30.0
 
-#max_obstacle_height: 1.0
-#min_obstacle_height: 0.05
+max_obstacle_height: 1.0
+min_obstacle_height: 0.05
 
 
-#robot_radius: 0.18
-#inflation_radius: 0.35
-cost_scaling_factor: 10.0
+# robot_radius: 0.19
+inflation_radius: 0.2
+cost_scaling_factor: 100.0
 map_type: costmap
-transform_tolerance: 0.5
+transform_tolerance: 1.0
 
 plugins:
   - {name: static_layer, type: "costmap_2d::StaticLayer"}
@@ -33,8 +33,8 @@ plugins:
 
 inflation_layer:
   enabled: true             # Whether to apply this plugin or not
-  inflation_radius: 0.35     # The radius in meters to which the map inflates obstacle cost values.
-  cost_scaling_factor: 10.0 # A scaling factor to apply to cost values during inflation.
+  inflation_radius: 0.40     # The radius in meters to which the map inflates obstacle cost values.
+  cost_scaling_factor: 100.0 # A scaling factor to apply to cost values during inflation.
 
 obstacle_layer:
   enabled: true
@@ -47,10 +47,10 @@ obstacle_layer:
     marking: true,
     clearing: true,
     max_obstacle_height: 2.0,
-    min_obstacle_height: 0.0, #0.035,
+    min_obstacle_height: 0.035,
     obstacle_range: 2.5,
     raytrace_range: 3.0,
-    inf_is_valid: false
+    inf_is_valid: true #false
 }
 
 static_layer:
