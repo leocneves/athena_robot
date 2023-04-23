@@ -56,8 +56,9 @@ with mic as source:
             try:
                 text = r.recognize_google(audio)
                 print(text.lower())
-                if text.lower() == 'atena':
+                if text.lower() in ['atena', 'athena']:
                     print('Keyword detected in the speech.')
+                    say('Olá')
             except Exception as e:
                 print('Please speak again.')
 
