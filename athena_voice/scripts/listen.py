@@ -32,7 +32,7 @@ def recognize_speech_from_mic(recognizer, microphone):
     print('Gravando ...')
     try:
         with microphone as source:
-            recognizer.adjust_for_ambient_noise(source, duration=0.6)
+            recognizer.adjust_for_ambient_noise(source) #, duration=0.6)
             recognizer.energy_threshold = 100
             audio = recognizer.listen(source, timeout=2, phrase_time_limit=3)
     except:

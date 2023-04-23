@@ -51,12 +51,23 @@ def on_unknown(recognizer, audio):
 with mic as source:
     try:
         while True:
-            r.adjust_for_ambient_noise(source)
+            r.adjust_for_ambient_noise(source, duration = 2)
+            # r.non_speaking_duration = 0.5
+            # r.dynamic_energy_threshold = True
+            # r.dynamic_energy_adjustment_damping = 0.15
+            # r.dynamic_energy_ratio = 1.5
+            # r.energy_threshold = 300 # 300
+            r.operation_timeout = None
+            # r.phrase_threshold = 3 #0.3
+            r.interim_results = True
+            # r.background_timeout = 10
+            # r.pause_threshold = 0.8
+
             print("Diga 'atena' para iniciar o reconhecimento de voz.")
             audio = r.listen(source)
 
             try:
-                text = r.recognize_google(audio)
+                text = r.recognize_google(audio, language='pt-BR')
                 print(text.lower())
                 if text.lower() in ['atena', 'athena']:
                     print('Keyword detected in the speech.')
