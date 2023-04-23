@@ -47,44 +47,51 @@ def on_unknown(recognizer, audio):
         print(f'Não foi possível se conectar com o serviço: {e}')
 
 with mic as source:
-    r.adjust_for_ambient_noise(source)
-    print("Diga 'atena' para iniciar o reconhecimento de voz.")
-    audio = r.listen(source)
-    
-    # Configura o objeto para reconhecer a palavra-chave
-    keyword_recognizer = sr.Recognizer()
-    keyword_recognizer.set_keyphrase('atena')
-    keyword_recognizer.add_keyword('atenção', 0.5)  # adiciona outra palavra-chave
-    keyword_recognizer.set_callback(callback)
-
-    # Reconhece a palavra-chave
     try:
-        keyword_recognizer.recognize_google(audio)
-    except sr.UnknownValueError:
-        print('Não foi possível reconhecer a fala')
+        while True:
+            r.adjust_for_ambient_noise(source)
+            print("Diga 'atena' para iniciar o reconhecimento de voz.")
+            audio = r.listen(source)
 
-    # Configura o objeto para reconhecer frases não incluindo a palavra-chave
-    r.set_keyword_recognizer(keyword_recognizer)
-    r.pause_threshold = 0.5
-    r.non_speaking_duration = 0.5
-    r.dynamic_energy_threshold = True
-    r.dynamic_energy_adjustment_damping = 0.15
-    r.dynamic_energy_ratio = 1.5
-    r.energy_threshold = 300
-    r.operation_timeout = None
-    r.phrase_threshold = 0.3
-    r.interim_results = True
-    r.background_timeout = 10
-    r.pause_threshold = 0.8
-    r.set_unknown_callback(on_unknown)
+            print(audio)
 
-    # Começa a gravar novamente e reconhece frases sem a palavra-chave
-    print("Agora você pode falar qualquer coisa.")
-    audio = r.listen(source)
-    try:
-        recognized_text = r.recognize_google(audio, language='pt-BR')
-        print('Você disse:', recognized_text)
-    except sr.UnknownValueError:
-        print('Não foi possível reconhecer a fala')
-    except sr.RequestError as e:
-        print(f'Não foi possível se conectar com o serviço: {e}')
+    except KeyboardInterrupt:
+        print('interrupted!')
+
+    # # Configura o objeto para reconhecer a palavra-chave
+    # keyword_recognizer = sr.Recognizer()
+    # keyword_recognizer.set_keyphrase('atena')
+    # # keyword_recognizer.add_keyword('atenção', 0.5)  # adiciona outra palavra-chave
+    # keyword_recognizer.set_callback(callback)
+
+    # # Reconhece a palavra-chave
+    # try:
+    #     keyword_recognizer.recognize_google(audio)
+    # except sr.UnknownValueError:
+    #     print('Não foi possível reconhecer a fala')
+
+    # # Configura o objeto para reconhecer frases não incluindo a palavra-chave
+    # r.set_keyword_recognizer(keyword_recognizer)
+    # r.pause_threshold = 0.5
+    # r.non_speaking_duration = 0.5
+    # r.dynamic_energy_threshold = True
+    # r.dynamic_energy_adjustment_damping = 0.15
+    # r.dynamic_energy_ratio = 1.5
+    # r.energy_threshold = 300
+    # r.operation_timeout = None
+    # r.phrase_threshold = 0.3
+    # r.interim_results = True
+    # r.background_timeout = 10
+    # r.pause_threshold = 0.8
+    # r.set_unknown_callback(on_unknown)
+
+    # # Começa a gravar novamente e reconhece frases sem a palavra-chave
+    # print("Agora você pode falar qualquer coisa.")
+    # audio = r.listen(source)
+    # try:
+    #     recognized_text = r.recognize_google(audio, language='pt-BR')
+    #     print('Você disse:', recognized_text)
+    # except sr.UnknownValueError:
+    #     print('Não foi possível reconhecer a fala')
+    # except sr.RequestError as e:
+    #     print(f'Não foi possível se conectar com o serviço: {e}')
