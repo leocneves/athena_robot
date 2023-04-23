@@ -98,7 +98,7 @@ if __name__ == "__main__":
     # create recognizer and mic instances
     recognizer = sr.Recognizer()
     # sr.Microphone.list_microphone_names()
-    microphone = sr.Microphone(device_index=1)
+    microphone = sr.Microphone(device_index=2)
 
 
     # Captura frases das configs
