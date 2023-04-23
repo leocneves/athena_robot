@@ -52,7 +52,7 @@ with mic as source:
     audio = r.listen(source)
     
     # Configura o objeto para reconhecer a palavra-chave
-    keyword_recognizer = sr.KeywordRecognizer()
+    keyword_recognizer = sr.Recognizer()
     keyword_recognizer.set_keyphrase('atena')
     keyword_recognizer.add_keyword('atenção', 0.5)  # adiciona outra palavra-chave
     keyword_recognizer.set_callback(callback)
