@@ -32,7 +32,8 @@ def recognize_speech_from_mic(recognizer, microphone):
     print('Gravando ...')
     try:
         with microphone as source:
-            recognizer.adjust_for_ambient_noise(source, duration=1)
+            recognizer.adjust_for_ambient_noise(source, duration=0.6)
+            recognizer.energy_threshold = 100
             audio = recognizer.listen(source, timeout=2, phrase_time_limit=3)
     except:
         print('Timeout excedido ... ')
@@ -70,7 +71,7 @@ def recognize_speech_from_mic(recognizer, microphone):
 def say(phrase):
     tts = gTTS(text=phrase, lang='pt-br')
 
-# Salve o arquivo de áudio como "audio.mp3"
+# Salva o arquivo de áudio como "audio.mp3"
     tts.save("/home/ubuntu/catkin_ws/src/athena_robot/athena_voice/scripts/audio.mp3")
 
 # Reproduza o arquivo de áudio usando o player padrão do sistema
@@ -117,6 +118,7 @@ if __name__ == "__main__":
 
         if respPhrase == "atena":
             say("Olá!")
+            beep()
             mWord = True
             #break
         elif (respPhrase.lower() == 'que dia é hoje') and mWord:
