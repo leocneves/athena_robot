@@ -9,7 +9,9 @@ import pandas as pd
 import Levenshtein
 
 r = sr.Recognizer()
-mic = sr.Microphone(device_index=1)
+print(sr.Microphone.list_microphone_names())
+device = input("Device: ")
+mic = sr.Microphone(device_index=int(device))
 
 
 def say(phrase):
