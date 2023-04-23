@@ -53,7 +53,13 @@ with mic as source:
             print("Diga 'atena' para iniciar o reconhecimento de voz.")
             audio = r.listen(source)
 
-            print(audio)
+            try:
+                text = r.recognize_google(audio)
+                print(text.lower())
+                if text.lower() == 'atena':
+                    print('Keyword detected in the speech.')
+            except Exception as e:
+                print('Please speak again.')
 
     except KeyboardInterrupt:
         print('interrupted!')
