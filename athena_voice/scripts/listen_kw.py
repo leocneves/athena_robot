@@ -7,12 +7,14 @@ import os
 import speech_recognition as sr
 import pandas as pd
 import Levenshtein
+import openai
 
 r = sr.Recognizer()
 print(sr.Microphone.list_microphone_names())
 device = input("Device: ")
 mic = sr.Microphone(device_index=int(device))
-
+openai.api_key = ""
+model_engine = "text-davinci-003"
 
 def say(phrase):
     tts = gTTS(text=phrase, lang='pt-br')
@@ -84,6 +86,18 @@ with mic as source:
                     # print(resp)
                     say("Sou a robô para atividades domésticas do Leonardo. Muito prazer.")
                     mWord = False
+
+                elif (text) and mWord:
+                    completion = openai.Completion.create(
+                        engine=model_engine,
+                        prompt=text,
+                        max_tokens=1024,
+                        n=1,
+                        stop=None,
+                        temperature=0.8,
+                    )
+
+                    say(completion['choices'][0]["text"])
 
 
             except Exception as e:
