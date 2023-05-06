@@ -20,17 +20,26 @@ def say(phrase):
     tts = gTTS(text=phrase, lang='pt-br')
 
 # Salva o arquivo de áudio como "audio.mp3"
-    tts.save("/home/ubuntu/catkin_ws/src/athena_robot/athena_voice/scripts/audio.mp3")
+    tts.save("/home/athena/catkin_ws/src/athena_robot/athena_voice/scripts/audio.mp3")
 
 # Reproduza o arquivo de áudio usando o player padrão do sistema
-    os.system("mpg321 /home/ubuntu/catkin_ws/src/athena_robot/athena_voice/scripts/audio.mp3")
+    os.system("mpg321 /home/athena/catkin_ws/src/athena_robot/athena_voice/scripts/audio.mp3")
     return None
 
 def beep():
     duration = 0.1  # segundos
     freq = 540  # Hz
     volume = 0.3  # reduzido em 50%
-    os.system(f"play -q -n synth {duration} sine {freq} vol {volume}")
+    # os.system(f"play -q -n synth {duration} sine {freq} vol {volume}")
+    os.system("ogg123 /usr/share/sounds/freedesktop/stereo/bell.oga")
+
+def beepComplete():
+    duration = 0.1  # segundos
+    freq = 540  # Hz
+    volume = 0.3  # reduzido em 50%
+    # os.system(f"play -q -n synth {duration} sine {freq} vol {volume}")
+    os.system("ogg123 /usr/share/sounds/freedesktop/stereo/complete.oga")
+
 
 def callback(recognizer, audio):
     try:
@@ -101,7 +110,7 @@ with mic as source:
 
 
             except Exception as e:
-                print('Please speak again.')
+                print('Please speak again.', e)
 
     except KeyboardInterrupt:
         print('interrupted!')

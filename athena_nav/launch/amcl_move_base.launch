@@ -2,6 +2,15 @@
 <launch>
   <master auto="start"/>
 
+  <arg name="global_planner"      default="navfn/NavfnROS"/>
+  <!-- <arg name="local_planner"       default="base_local_planner/TrajectoryPlannerROS"/> -->
+  <arg name="global_layers"       default="[ {name: static_layer, type: 'costmap_2d::StaticLayer'}, {name: obstacles_layer, type: 'costmap_2d::ObstacleLayer'}, {name: inflation_layer, type: 'costmap_2d::InflationLayer'}]" />
+  <arg name="local_layers"        default="[ {name: obstacles_layer, type: 'costmap_2d::ObstacleLayer'}, {name: inflation_layer, type: 'costmap_2d::InflationLayer'}]"/>
+  <arg name="observation_sources" default="laser_scan_front_observation"/>
+
+  <arg name="xy_goal_tolerance"   default="0.1"/>
+  <arg name="yaw_goal_tolerance"  default="0.05"/>
+
   <!-- <param name="robot_description" command="$(find xacro)/xacro.py '$(find diff_drive_bot)/urdf/mybot.xacro'"/> -->
 
  <!--  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
@@ -11,12 +20,8 @@
   <!-- <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"></node> -->
 
   <!-- Map server -->
-  <arg name="map_file" default="$(find athena_nav)/maps/mapa.yaml"/>
+  <arg name="map_file" default="$(find athena_nav)/maps/map.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
-
-  <!-- Place map frame at odometry frame -->
-  <!-- <node pkg="tf" type="static_transform_publisher" name="map_odom_broadcaster"
-      args="0 0 0 0 0 0 /map odom 100"/> -->
 
   <!-- AMCL -->
   <node pkg="amcl" type="amcl" name="amcl" output="screen">
@@ -25,11 +30,11 @@
     <param name="odom_frame_id" value="odom"/>
     <param name="odom_model_type" value="diff-corrected"/>
     <param name="base_frame_id" value="base_link"/>
-    <param name="update_min_d" value="0.5"/>
-    <param name="update_min_a" value="1.0"/>
+    <param name="update_min_d" value="0.2"/>
+    <param name="update_min_a" value="0.2"/>
 
-    <param name="min_particles"             value="400"/>
-    <param name="max_particles"             value="1500"/>
+    <param name="min_particles"             value="500"/>
+    <param name="max_particles"             value="3000"/>
     <param name="kld_err"                   value="0.02"/>
     <param name="resample_interval"         value="1"/>
     <param name="transform_tolerance"       value="0.5"/>
@@ -37,7 +42,7 @@
     <param name="recovery_alpha_fast"       value="0.00"/>
     <param name="gui_publish_rate"          value="50.0"/>
 
-    <param name="laser_max_range"           value="3.5"/>
+    <param name="laser_max_range"           value="8.0"/>
     <param name="laser_max_beams"           value="180"/>
     <param name="laser_z_hit"               value="0.5"/>
     <param name="laser_z_short"             value="0.05"/>
@@ -48,10 +53,17 @@
     <param name="laser_likelihood_max_dist" value="2.0"/>
     <param name="laser_model_type"          value="likelihood_field"/>
 
+    <param name="odom_model_type"           value="diff"/>
     <param name="odom_alpha1"               value="0.1"/>
     <param name="odom_alpha2"               value="0.1"/>
     <param name="odom_alpha3"               value="0.1"/>
     <param name="odom_alpha4"               value="0.1"/>
+    <param name="odom_frame_id"             value="odom"/>
+    <param name="base_frame_id"             value="base_link"/>
+    <!-- <param name="odom_alpha1"               value="0.008"/>
+    <param name="odom_alpha2"               value="0.040"/>
+    <param name="odom_alpha3"               value="0.004"/>
+    <param name="odom_alpha4"               value="0.025"/> -->
 
   </node>
   
@@ -63,15 +75,26 @@
   <!-- move_base -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+    <param name="base_global_planner" value="$(arg global_planner)"/>
+
+    <rosparam param="global_costmap/plugins" subst_value="true">$(arg global_layers)</rosparam>
+    <rosparam param="local_costmap/plugins" subst_value="true">$(arg local_layers)</rosparam>
+
+    <param name="global_costmap/obstacles_layer/observation_sources" value="$(arg observation_sources)"/>
+    <param name="local_costmap/obstacles_layer/observation_sources"  value="$(arg observation_sources)"/>
+
     <rosparam file="$(find athena_nav)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
     <rosparam file="$(find athena_nav)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
-    <rosparam file="$(find athena_nav)/config/local_costmap_params.yaml" command="load" />
-    <rosparam file="$(find athena_nav)/config/global_costmap_params.yaml" command="load" />
+    <rosparam command="load" file="$(find athena_nav)/config/costmap_global_params.yaml"/>
+    <rosparam command="load" file="$(find athena_nav)/config/costmap_local_params.yaml"/>
     <rosparam file="$(find athena_nav)/config/move_base_params.yaml" command="load" />
-    <rosparam file="$(find athena_nav)/config/dwa_local_planner_params.yaml" command="load" />
+    <rosparam command="load" file="$(find athena_nav)/config/global_planner_params.yaml"/>
+
+    <rosparam file="$(find athena_nav)/config/dwacp.yaml" command="load"/>
     <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
     <remap from="odom" to="$(arg odom_topic)"/>
-    <param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
+    <param name="DWAPlannerROS/min_vel_x" value="-0.20" if="$(arg move_forward_only)" />
+
   </node>
 
 </launch>

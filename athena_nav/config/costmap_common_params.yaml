@@ -1,60 +1,43 @@
-obstacle_range: 5.0
-raytrace_range: 6.0 #3.0
+obstacle_range: 3.0
+raytrace_range: 12.0 #3.0
 
-footprint: [[-0.18, -0.18], [-0.18, 0.18], [0.18, 0.18], [0.18, -0.18]]
-footprint_padding: 0 #0.05
-
-map_topic: map
-subscribe_to_updates: true
-global_frame: map #odom
-
-#robot_base_frame: base_link
-#update_frequency: 30.0
-#publish_frequency: 30.0
-
-max_obstacle_height: 1.0
-min_obstacle_height: 0.05
-
-
-# robot_radius: 0.19
-inflation_radius: 0.2
-cost_scaling_factor: 100.0
-map_type: costmap
-transform_tolerance: 1.0
-
-plugins:
-  - {name: static_layer, type: "costmap_2d::StaticLayer"}
-  - {name: obstacle_layer, type: "costmap_2d::ObstacleLayer"}
-  - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
-
-#static_layer:
-#  map_topic: /map
-#  subscribe_to_updates: false
-
-inflation_layer:
-  enabled: true             # Whether to apply this plugin or not
-  inflation_radius: 0.40     # The radius in meters to which the map inflates obstacle cost values.
-  cost_scaling_factor: 100.0 # A scaling factor to apply to cost values during inflation.
-
-obstacle_layer:
-  enabled: true
-  observation_sources: laser_scan_sensor #point_cloud_sensor
-
-  laser_scan_sensor: {
-    sensor_frame: camera_link,
-    data_type: LaserScan,
-    topic: scan,
-    marking: true,
-    clearing: true,
-    max_obstacle_height: 2.0,
-    min_obstacle_height: 0.035,
-    obstacle_range: 2.5,
-    raytrace_range: 3.0,
-    inf_is_valid: true #false
-}
+footprint: [[0.09, -0.18], [0.09, 0.18], [-0.27, 0.18], [-0.27, -0.18]]
+footprint_padding: 0.01 #0.05
 
 static_layer:
   enabled: true
-  inflation_radius: 0.45 #0.3
+  # map_topic: "/map" # The topic that the costmap subscribes to for the static map. This parameter is useful when you have multiple costmap instances within a single node that you want to use different static maps. - New in navigation 1.3.1
+  # unknown_cost_value: -1 # The value for which a cost should be considered unknown when reading in a map from the map server. If the costmap is not tracking unknown space, costs of this value will be considered occupied. A value of zero also results in this parameter being unused.
+  # lethal_cost_threshold: 80 # 100 # The threshold value at which to consider a cost lethal when reading in a map from the map server.
+  # first_map_only: false # Only subscribe to the first message on the map topic, ignoring all subsequent messages
+  # subscribe_to_updates: false # In addition to map_topic, also subscribe to map_topic + "_updates"
+  # track_unknown_space: false #true # If true, unknown values in the map messages are translated directly to the layer. Otherwise, unknown values in the map message are translated as FREE_SPACE in the layer.
+  # use_maximum: false # Only matters if the static layer is not the bottom layer. If true, only the maximum value will be written to the master costmap.
+  # trinary_costmap: true # If true, translates all map message values to NO_INFORMATION/FREE_SPACE/LETHAL_OBSTACLE (three values). If false, a full spectrum of intermediate values is possible.
 
-#point_cloud_sensor: {sensor_frame: frame_name, data_type: PointCloud, topic: topic_name, marking: true, clearing: true}
+
+obstacles_layer:
+  enabled: true
+
+  # A list of observation source names separated by spaces.
+  observation_sources: laser_scan_front_observation
+
+  laser_scan_front_observation: {
+      topic: scan,        # The topic on which sensor data comes in for this source.
+      sensor_frame: laser, # The frame of the origin of the sensor.
+      observation_persistence: 0.0,  # How long to keep each sensor reading in seconds. A value of 0.0 will only keep the most recent reading.
+      expected_update_rate: 0.0,     # How often to expect a reading from a sensor in seconds. A value of 0.0 will allow infinite time between readings.
+      data_type: LaserScan,          # The data type associated with the topic, right now only "PointCloud", "PointCloud2", and "LaserScan" are supported.
+      clearing: true,                # Whether or not this observation should be used to clear out freespace.
+      marking: true,                 # Whether or not this observation should be used to mark obstacles.
+      max_obstacle_height: 2.0, # 2.0     # The maximum height in meters of a sensor reading considered valid.
+      min_obstacle_height: 0.05, # 0.035,      # The minimum height in meters of a sensor reading considered valid.
+      obstacle_range: 3.0,           # The maximum range in meters at which to insert obstacles into the costmap using sensor data.
+      raytrace_range: 12.0,           # The maximum range in meters at which to raytrace out obstacles from the map using sensor data.
+      inf_is_valid: false,           # Allows for Inf values in "LaserScan" observation messages. The Inf values are converted to the laser maximum range.
+  }
+
+inflation_layer:
+  enabled: true             # Whether to apply this plugin or not
+  inflation_radius: 0.45     # The radius in meters to which the map inflates obstacle cost values.
+  cost_scaling_factor: 6.0 # A scaling factor to apply to cost values during inflation
