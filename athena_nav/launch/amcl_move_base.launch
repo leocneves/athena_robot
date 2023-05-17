@@ -70,7 +70,7 @@
   <!-- Arguments -->
   <arg name="cmd_vel_topic" default="hoverboard_velocity_controller/cmd_vel" />
   <arg name="odom_topic" default="hoverboard_velocity_controller/odom" />
-  <arg name="move_forward_only" default="true"/>
+  <arg name="move_forward_only" default="false"/>
 
   <!-- move_base -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
